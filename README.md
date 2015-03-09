@@ -1,2 +1,2 @@
-## Tic Tac Toe demo with Firebase!
+## Tic-tac-toe demo with Firebase!
 

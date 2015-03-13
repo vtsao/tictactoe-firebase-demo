@@ -153,15 +153,15 @@ function displayGameStatus(context, gameName, game) {
 
   // Render whose the X player.
   context.fillStyle = '#b00';
-  context.fillText('X', 0, 18);
+  context.fillText('X', 2, 18);
   context.fillStyle = '#111';
-  context.fillText(' = ' + whoseX, 9, 18);
+  context.fillText(' = ' + whoseX, 14, 18);
 
   // Render whose the O player.
   context.fillStyle = '#00b';
   context.fillText('O', 0, 36);
   context.fillStyle = '#111';
-  context.fillText(' = ' + whoseO, 9, 36);
+  context.fillText(' = ' + whoseO, 14, 36);
 
   // Render the game status, i.e., whose turn it is or who won if the game is
   // over.

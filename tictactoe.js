@@ -196,6 +196,12 @@ var tictactoe = {
    * Handles how to start the game.
    */
   gameStartEventHandler: function(e) {
+    if (FIRBASE_URL === 'INSERT_YOUR_FIREBASE_URL_HERE') {
+      alert('You need to enter your own Firebase URL in the tictactoe.js ' +
+          'file before this game will work!');
+      return;
+    }
+
     // Retrieve the name of the game room the user entered.
     var gameRoom = $('#room-name').val();
     if (gameRoom === '') {

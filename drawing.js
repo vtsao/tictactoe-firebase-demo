@@ -135,7 +135,7 @@ function displayGameStatus(context, gameName, game) {
           !game.isXTurn && tictactoe.player === 'O' ? 'You win :)' :
           'They win :(';
     } else {
-      gameStatus = 'Draw game!';
+      gameStatus = 'Draw game :|';
     }
   } else {
     gameStatus = game.isXTurn && tictactoe.player === 'X' ||

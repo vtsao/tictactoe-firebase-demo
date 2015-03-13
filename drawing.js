@@ -4,8 +4,8 @@
  * O's are drawn to be a size of 110x110 in a cell on the tic-tac-toe grid (each
  * grid size is 160x160 due to the canvas size).
  *
- * TODO: Update this code to dynamically draw the game elements for a dynamic
- * width.
+ * TODO(vtsao): Update this code to dynamically draw the game elements for a
+ * dynamic width.
  */
 
 /**
@@ -116,23 +116,70 @@ function drawWinningLine(context, startCoordinates, endCoordinates) {
 }
 
 /**
- * Draws text indicating the game was a draw.
+ * Draws the game status information. E.g., the game room name, which player is
+ * X and O, and who's turn it is.
  */
-function displayDrawGameText(context) {
-  context.font = '90px \'open sans\', arial, sans-serif';
-  context.textAlign = 'center';
-  context.textBaseline = 'middle';
-  context.fillText('Draw', 240, 240);
+function displayGameStatus(context, gameName, game) {
+  // Clear the canvas.
+  context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+
+  // Get the game status information.
+  // TODO(vtsao): We should use anon auth to store player marks instead and read
+  // from the datastore here instead of locally.
+  var whoseX = tictactoe.player === 'X' ? 'You' : 'Them';
+  var whoseO = tictactoe.player === 'O' ? 'You' : 'Them';
+  var gameStatus = '';
+  if (game.isGameOver) {
+    if (game.hasOwnProperty('winningMove')) {
+      gameStatus = game.isXTurn && tictactoe.player === 'X' ||
+          !game.isXTurn && tictactoe.player === 'O' ? 'You win :)' :
+          'They win :(';
+    } else {
+      gameStatus = 'Draw game!';
+    }
+  } else {
+    gameStatus = game.isXTurn && tictactoe.player === 'X' ||
+        !game.isXTurn && tictactoe.player === 'O' ? 'Your turn.' :
+        'Waiting for them...';
+  }
+
+  // Set common font style.
+  context.font = '18px \'open sans\', arial, sans-serif';
+  context.textBaseline = 'top';
+
+  // Render the game name text.
+  context.fillStyle = '#111';
+  context.fillText('Game room: ' + gameName, 0, 0);
+
+  // Render whose the X player.
+  context.fillStyle = '#b00';
+  context.fillText('X', 0, 18);
+  context.fillStyle = '#111';
+  context.fillText(' = ' + whoseX, 9, 18);
+
+  // Render whose the O player.
+  context.fillStyle = '#00b';
+  context.fillText('O', 0, 36);
+  context.fillStyle = '#111';
+  context.fillText(' = ' + whoseO, 9, 36);
+
+  // Render the game status, i.e., whose turn it is or who won if the game is
+  // over.
+  context.fillStyle = '#111';
+  context.fillText(gameStatus, 0, 70);
 }
 
 /**
  * Draws X's and O's and end game visuals on the canvas based on the specified
  * game model state.
  */
-function paintBoard(context, game) {
+function paintBoard(context, gameStatusContext, gameName, game) {
   // Clear the canvas.
   context.clearRect(0, 0, context.canvas.width, context.canvas.height);
   drawBoard(context);
+
+  // Render the game status.
+  displayGameStatus(gameStatusContext, gameName, game);
 
   // Render the board.
   var board = game.board;
@@ -154,9 +201,9 @@ function paintBoard(context, game) {
           unflattenCellIndex(game.winningMove.startIndex, board.width),
           unflattenCellIndex(game.winningMove.endIndex, board.width)
       );
-    } else {
-      displayDrawGameText(context);
     }
+    // TODO(vtsao): Handle end game, i.e., allow player to start or join a new
+    // game.
   }
 }
 

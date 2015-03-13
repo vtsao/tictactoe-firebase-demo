@@ -1,9 +1,20 @@
 /**
  * Controller that sets up the Tic-tac-toe game.
+ *
+ * TODO(vtsao): Update this code to dynamically draw the game elements for a
+ * dynamic width. The data model is mostly there, it already does most things
+ * dynamically. It's mostly the drawing utilities that need to be updated. There
+ * are only a few hardcoded things in this file for a width 3 square grid. We
+ * also currently assume a square grid. Tic-tac-toe is a m,n,k-game, so it would
+ * be cool to allow configuring the game to take in a width and height and
+ * dynamically setup the game to work properly with the specified w and h.
+ *
+ * TODO(vtsao): Add anonymous authentication and add security (validation).
  */
 
 /** The Firebase data URL to use to read from and store data to. */
-var FIRBASE_URL = 'INSERT_YOUR_FIREBASE_URL_HERE';
+// var FIRBASE_URL = 'INSERT_YOUR_FIREBASE_URL_HERE';
+var FIRBASE_URL = 'https://tic-tac-toe-demo.firebaseio.com/';
 
 /**
  * The width of a tic-tac-toe board.
@@ -120,7 +131,6 @@ var tictactoe = {
       // Mark it as the player's cell and update whose turn it is.
       game.board.cells[tictactoe.flattenCellIndex(xCell, yCell,
           game.board.width)] = tictactoe.player;
-      game.isXTurn = !game.isXTurn;
 
       // See if this move was a winning move. If not, check to see if the
       // game is a draw.
@@ -130,6 +140,9 @@ var tictactoe = {
         // If it is a winning move, set end game attributes.
         game.winningMove = winningMove;
         game.isGameOver = true;
+      } else {
+        // Don't change the player if this player won.
+        game.isXTurn = !game.isXTurn;
       }
 
       // Update the game state on Firebase.
@@ -157,7 +170,8 @@ var tictactoe = {
    * Handles how the view renders when the game's data model changes.
    */
   gameChangedEventHandler: function(dataSnapshot) {
-    paintBoard(tictactoe.context, dataSnapshot.val());
+    paintBoard(tictactoe.context, tictactoe.gameStatusContext,
+        dataSnapshot.key(), dataSnapshot.val());
   },
 
   /**
@@ -184,9 +198,23 @@ var tictactoe = {
    */
   gameStartEventHandler: function(e) {
     // Retrieve the name of the game room the user entered.
-    tictactoe.gameRoom = 'rawr';
+    var gameRoom = $('#room-name').val();
+    if (gameRoom === '') {
+      alert('You need to enter a game room name!');
+      return;
+    } else {
+      tictactoe.gameRoom = gameRoom;
+      // Remove the game room input text and buttons and show the game status
+      // canvas.
+      $('#game-room').hide();
+      $('#game-status').css('display', 'block');
+    }
 
     // Create a reference to our Firebase datastore.
+    // TODO(vtsao): Handle rooms better. (1) track if a room is full or not and
+    // don't let somebody join a full room. (2) don't let somebody join a room
+    // that doesn't exist. (3) remove a room's data after the game is over, but
+    // leave the canvas rendering.
     tictactoe.fb = new Firebase(FIRBASE_URL);
     tictactoe.gameInstance = tictactoe.fb.child('games/' + tictactoe.gameRoom);
 
@@ -198,6 +226,9 @@ var tictactoe = {
         isGameOver: false
       });
       // Player who started the game is always 'X'.
+      // TODO(vtsao): This is not the best way to do this, we should use
+      // Firebase's anonymous auth and store each player's mark in the
+      // datastore instead of locally.
       tictactoe.player = 'X';
     } else {
       tictactoe.player = 'O';
@@ -217,11 +248,14 @@ var tictactoe = {
     tictactoe.canvas = $('#canvas').get(0);
     tictactoe.context = tictactoe.canvas.getContext('2d');
 
+    tictactoe.gameStatusCanvas = $('#game-status').get(0);
+    tictactoe.gameStatusContext = tictactoe.gameStatusCanvas.getContext('2d');
+
     // Setup the game.
     drawBoard(tictactoe.context);
-    $('#new-game').click({isNew: true, boardWidth: TICTACTOE_BOARD_WIDTH},
+    $('#new').click({isNew: true, boardWidth: TICTACTOE_BOARD_WIDTH},
         tictactoe.gameStartEventHandler);
-    $('#join-game').click({isNew: false}, tictactoe.gameStartEventHandler);
+    $('#join').click({isNew: false}, tictactoe.gameStartEventHandler);
   }
 };
 

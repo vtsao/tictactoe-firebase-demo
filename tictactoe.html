@@ -6,7 +6,14 @@
 <script src="drawing.js"></script>
 <script src="tictactoe.js"></script>
 <title>Tic-tac-toe Firebase demo</title>
-<div id="new-game">New game</div>
-<div id="join-game">Join game</div>
-<canvas id="canvas" width="480" height="480"></canvas>
+<div id="game-space">
+  <div id="game-room" class="center">
+    Game room: <input id="room-name" type="text" name="fname">
+    <input id="new" type="submit" value="New game" class="">
+    <input id="join" type="submit" value="Join game" class="">
+  </div>
+
+  <div><canvas id="game-status" class="center" width="480" height="100"></canvas></div>
+  <div><canvas id="canvas" class="center" width="480" height="480"></canvas></div>
+</div>
 

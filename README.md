@@ -10,6 +10,7 @@ can be played by two people from different browsers in real time.
 
 ### How to use
 This example is not hosted live anywhere at this time.
+
 1. Download or clone this Git repository.
 2. Open tictactoe.js and insert your own testing Firebase repository in there.
 3. Open the tictactoe.html file in your browser.

@@ -13,8 +13,7 @@
  */
 
 /** The Firebase data URL to use to read from and store data to. */
-// var FIRBASE_URL = 'INSERT_YOUR_FIREBASE_URL_HERE';
-var FIRBASE_URL = 'https://tic-tac-toe-demo.firebaseio.com/';
+var FIRBASE_URL = 'INSERT_YOUR_FIREBASE_URL_HERE';
 
 /**
  * The width of a tic-tac-toe board.
